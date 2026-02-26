@@ -28,7 +28,7 @@ source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Edge-Effects/Data-Sc
 check_stds = function(.dat, .std_curve) {
    
    .dat %>%
-      filter(str_detect(vial, pattern = "L")) %>%
+      filter(vial %in% c(paste0('L', c(2:40)))) %>%
       # correct for blank absorbance
       mutate(abs = abs_667 - (.dat %>% filter(sample_id=="Blank") %>% pull(abs_667) %>% mean)) %>%
       # concentration
@@ -45,12 +45,19 @@ rm_zbsc = function(.dat) {
    .dat %>%
       filter(!(sample_id=="Zero" | sample_id=="Blank"),
              !(str_detect(sample_id, pattern="chk")),
-             !(str_detect(sample_id, pattern="L")))
+             !(sample_id %in% c(paste0('L', c(2:40)))))
 }
 
 # Function to process datasheet and calculate sulfide concentration in microcentrifuge vial
 calc_vial_S = function(.processed, .raw, .std_curve) {
-   
+      
+   data_flags = c(
+      'L',  # sample absorbance too low, need to rerun w/ lower pre-color dilution 
+      'H',  # sample absorbance too high, need to rerun w/ higher pre-color dilution
+      # 'F',  # flocculent material in vial, sample not run
+      'M'   # misc. issue, see Notes column for sample
+   )
+  
    .processed %>%
       # correct absorbance
       mutate(
@@ -58,14 +65,14 @@ calc_vial_S = function(.processed, .raw, .std_curve) {
          abs_blk_corr = abs_667 - (.raw %>% filter(sample_id=="Blank") %>% pull(abs_667) %>% mean),
          # for post-color dilution
          abs_corr = abs_blk_corr * dilution_post) %>%
-      # remove any samples that were too low or too high and need to be re-run with a different pre-color dilution
-      filter(!(flag %in% c("L", "H"))) %>%
+      # remove samples with data flags indicating issues
+      filter(!(flag %in% data_flags)) %>%
       # remove sample dupes
       filter(!(str_detect(sample_id, pattern="dup"))) %>%
       # sulfide concentration in microcentrifuge vial that diamine reagent was added to (units = uM)
       mutate(vial_S_uM = calc_S_conc(abs_corr, .std_curve)) %>%
       # for samples that were below detection limit, replace concentration with half the DL (DL=2uM, so replace with 1) *may need to update this later
-      mutate(vial_S_uM = replace(vial_S_uM, str_detect(.$flag, pattern="D"), 1))
+      mutate(vial_S_uM = replace(vial_S_uM, flag %in% c("DL"), 1))
 }
    
 
@@ -295,7 +302,9 @@ spatial_pw_sample_data = read.csv("Data/FLK24_spatial_porewater.csv")
 # Combine spec runs and calculate sulfide concentration (units = uM)
 fk_pw_spatial = bind_rows(S1_s01, S1_s02, S1_r01, S2_s01, S2_s02, S3_01, S2_S3_r, S2_S3_r2) %>%
    # correct measured sulfide concentration for any dilution prior to adding diamine reagent (units = uM)
-   mutate(scint_S_uM = vial_S_uM * dilution_pre)
+   mutate(scint_S_uM = vial_S_uM * dilution_pre) %>%
+   # for samples below DL at dilution 1:2 (abs < 0.02), vial_S becomes 2.0, but should be 1.0uM, replace conc with half the DL (DL=2uM)
+   mutate(scint_S_uM = replace(scint_S_uM, flag %in% c("DL"), 1))
 
 
 #- Sulfide concentration in original porewater

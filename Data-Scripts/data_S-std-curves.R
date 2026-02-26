@@ -43,7 +43,7 @@ std_apr25 = std_apr25 %>%
 
 # View the curve
 windows(); ggplot(std_apr25, aes(x = abs_corr, y = conc_uM)) + geom_point()
-dev.off()
+graphics.off()
 summary(lm(conc_uM ~ abs_corr, data = std_apr25))  # R2 = 0.995
 
 
