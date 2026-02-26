@@ -286,7 +286,7 @@ S2_S3_r2 %>% filter(str_detect(sample_id, "dup") | lead(str_detect(sample_id, "d
 
 # Sulfide concentration in vials (units = uM)
 S2_S3_r2 = calc_vial_S(S2_S3_r2, raw_S2_S3_r2, std_apr25) %>%
-   # remove vertical porewater samples, keep only spatial
+   # keep only spatial porewater samples, remove vertical
    filter(str_detect(sample_id, "-R"))
 
 
