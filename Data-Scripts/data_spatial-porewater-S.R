@@ -54,6 +54,7 @@ calc_vial_S = function(.processed, .raw, .std_curve) {
    data_flags = c(
       'L',  # sample absorbance too low, need to rerun w/ lower pre-color dilution 
       'H',  # sample absorbance too high, need to rerun w/ higher pre-color dilution
+      # 'DL', # sample below detection limit
       # 'F',  # flocculent material in vial, sample not run
       'M'   # misc. issue, see Notes column for sample
    )
