@@ -14,7 +14,7 @@ library(tidyverse)
 # need to run "data_S-std-curves" script first
 source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Edge-Effects/Data-Scripts/data_S-std-curves.R")
 
-# Create processing functions in 'data_spatial-porewater' scripts 
+# Create processing functions in 'data_spatial-porewater' script
 #  check_stds(), rm_zbsc(), calc_vial_S()
 
 
@@ -68,7 +68,7 @@ v01.r = calc_vial_S(v01.r, raw_v01.r, std_apr25) %>%
 raw_v02 = read_csv("Data/Spec Data/2026.02.06 - FLK24_vertical porewater_S1.1-S3.2.csv") %>% 
    janitor::remove_empty(which = 'rows')
 
-# check measured concentration of standards (just a continuation of the above run, so stds are exactly the same)
+# check measured concentration of standards
 check_stds(raw_v02, std_dec25)
   # L2 is a bit off, all others good
 
