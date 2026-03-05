@@ -7,12 +7,17 @@ library(tidyverse)
 
 # run 'data_spatial-porewater-S' and 'data_meadow-data' scripts first to generate data
 
-se = function(.x) { sd(.x, na.rm=T) / sqrt(length(.x)) }
+se = function(.x) { sd(.x, na.rm=T) / sqrt(length(na.omit(.x))) }
 
 # add a new variable for graphing distance along the transect
 meadow = meadow %>%
    mutate(distance = if_else(treatment=="unvegetated", transect_location_m * -1, transect_location_m))
 
+
+
+#===
+# Spatial Porewater along Transects
+#===
 
 
 #-- Surface Porewater S viewed along transects --#
@@ -335,8 +340,8 @@ tmp = meadow %>%
    arrange(site_id, transect_location_m, desc(treatment)) %>% 
    select(site_id, transect_location_m, treatment, contains("pwS")) %>%
    # calculate the difference between veg and unveg for corresponding distances on the transect for each patch
-   #- positive value means sulfide is higher in the seagrass
-   #- negative value means suflide is higher in the bare patch
+   #- positive (+) value means sulfide is higher in the seagrass
+   #- negative (-) value means suflide is higher in the bare patch
    summarize(surf_s_diff = surface_pwS[treatment=="vegetated"] - surface_pwS[treatment=="unvegetated"], 
              rhiz_s_diff = rhizome_pwS[treatment=="vegetated"] - rhizome_pwS[treatment=="unvegetated"], 
              .by = c(site_id, transect_location_m))
@@ -544,6 +549,50 @@ ggplot(meadow %>%
    #
    theme_classic() +
    theme(panel.border = element_rect(color="black", fill=NA))
+
+
+
+
+#===
+# Vertical Porewater Profiles
+#===
+
+# test - just view Craig Key at the 0.5m mark, seagrass vs disturbed
+ggplot(fk_pw_vertical %>% 
+          filter(site == 1, transect_location_m == 0.5) %>%
+          mutate(core_depth_cm = replace_values(core_depth_cm, 14 ~ 15, 19 ~ 20)) %>%
+          summarize(mean = mean(porewater_S_uM, na.rm=T), se = se(porewater_S_uM), .by = c(treatment, core_depth_cm))) +
+   # 
+   geom_line(aes(x = core_depth_cm, y = mean, color = treatment)) +
+   geom_errorbar(aes(x = core_depth_cm, ymin = mean - se, ymax = mean + se, color = treatment), width = 0.5) +
+   geom_point(aes(x = core_depth_cm, y = mean, color = treatment), size = 3) +
+   #
+   coord_flip() +
+   scale_x_reverse(name = "Depth", limits = c(20, 0)) +
+   scale_y_continuous(name = "Porewater Sulfide (uM)") +
+   theme_classic()
+
+
+# all together
+windows(height=4, width=8)
+ggplot(fk_pw_vertical %>% 
+          mutate(core_depth_cm = replace_values(core_depth_cm, 14 ~ 15, 19 ~ 20)) %>% 
+          summarize(mean = mean(porewater_S_uM, na.rm=T), se = se(porewater_S_uM), .by = c(site_name, treatment, transect_location_m, core_depth_cm))) +
+   # 
+   geom_line(aes(x = core_depth_cm, y = mean, color = treatment)) +
+   geom_errorbar(aes(x = core_depth_cm, ymin = mean - se, ymax = mean + se, color = treatment), width = 0.5) +
+   geom_point(aes(x = core_depth_cm, y = mean, color = treatment), size = 3) +
+   #
+   coord_flip() +
+   scale_x_reverse(name = "Depth", limits = c(25, 0)) +
+   scale_y_continuous(name = "Porewater Sulfide (uM)") +
+   #
+   facet_grid(rows = vars(transect_location_m), cols = vars(site_name)) +
+   theme_bw()
+
+
+
+
 
 
 
