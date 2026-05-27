@@ -12,7 +12,7 @@ setwd("C:/Users/rajohnson6/Box/Projects/Seagrass Disturbance")
 library(tidyverse)
 
 # need to run "data_S-std-curves" script first
-source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Edge-Effects/Data-Scripts/data_S-std-curves.R")
+source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Sulfide/Data-Scripts/data_S-std-curves.R")
 
 # Create processing functions in 'data_spatial-porewater' script
 #  check_stds(), rm_zbsc(), calc_vial_S()

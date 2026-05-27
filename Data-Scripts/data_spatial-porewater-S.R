@@ -12,7 +12,7 @@ setwd("C:/Users/rajohnson6/Box/Projects/Seagrass Disturbance")
 library(tidyverse)
 
 # need to run "data_S-std-curves" script first
-source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Edge-Effects/Data-Scripts/data_S-std-curves.R")
+source("C:/Users/rajohnson6/Desktop/Local-Repos/Disturbance-Sulfide/Data-Scripts/data_S-std-curves.R")
 
 
 # naming convention (examples for object names, so I don't forget by the time I have new data/runs to add here)
