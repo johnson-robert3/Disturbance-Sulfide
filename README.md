@@ -12,10 +12,13 @@ Investigating effects of meadow interior disturbance patches and seagrass loss o
 
 #### Questions to investigate: 
 
+Add spatial autocorrelation for all analyses testing effect of distance from the edge ( corAR1(form = ~ distance | site/treatment) )
+
 - [x] Is porewater S related to distance from the disturbance edge? (For pooled data? For veg. and unveg. separately?)
    - [x] For surface porewater
    - [x] For rhizome porewater
    - *No relationship between porewater sulfide and distance from the veg boundary*
+   - [ ] Re-run these stats adding spatial autocorrelation for samples within each transect (by treatment)
 - [ ] Are any seagrass parameters related to distance from the disturbance edge? 
    - [ ] Belowground biomass
    - [ ] Aboveground biomass
@@ -32,6 +35,7 @@ Investigating effects of meadow interior disturbance patches and seagrass loss o
 
 - [x] Is there a relationship between burrow density and distance from the seagrass boundary? 
    - No. But, across all sites, burrow density is higher in bare sediments, and there is a slight peak just outside of the seagrass edge. 
+   - [ ] Re-run this, adding spatial autocorrelation for samples within each transect (by treatment) to the model
 - [x] Is there a relationship between burrow density and porewater sulfide? 
    - at high burrow densities, there is always higher sulfide (but we dont' have lots of data at high burrow density). sulfide is very variable at low burrow densities.
 - [ ] Is burrow density related to sediment OM, DBD, or porosity?
